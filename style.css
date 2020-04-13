@@ -1,22 +1,23 @@
 .cron-tab-container {
+  padding: 20px;
   display: flex; }
   .cron-tab-container .time-picker-container {
     display: flex; }
   .cron-tab-container .form-control-wrapper {
-    margin: 0rem 0.8rem; }
+    margin: 0 8px; }
     .cron-tab-container .form-control-wrapper .form-control {
       display: block;
-      padding: 0.3rem 0.5rem;
-      font-size: 1.6rem;
-      height: 14rem;
-      width: 14rem;
+      padding: 3px 5px;
+      font-size: 16px;
+      height: 140px;
+      width: 140px;
       line-height: 1.5;
-      color: #000;
-      border: 0.1rem solid #bdbdbd;
+      color: #666;
+      border: 1 solid #efefef;
       transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; }
     .cron-tab-container .form-control-wrapper .cron-select {
-      height: 3rem;
-      width: 14rem; }
+      height: 30px;
+      width: 140px; }
   .cron-tab-container .supporting-words {
-    margin: 0 0.8rem;
-    font-size: 1.6rem; }
+    margin: 0 8px;
+    font-size: 16px; }

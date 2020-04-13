@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.CronJob = void 0;
+exports["default"] = void 0;
 
 var _react = _interopRequireWildcard(require("react"));
 
@@ -11,7 +11,7 @@ var _propTypes = _interopRequireDefault(require("prop-types"));
 
 var _lodash = _interopRequireDefault(require("lodash"));
 
-require("./_index.less");
+require("./style.css");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -637,7 +637,8 @@ var CronJob = /*#__PURE__*/function (_Component) {
   return CronJob;
 }(_react.Component);
 
-exports.CronJob = CronJob;
+var _default = CronJob;
+exports["default"] = _default;
 CronJob.propTypes = {
   getCronExpression: _propTypes["default"].func,
   jobName: _propTypes["default"].string

@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import './_index.less';
+import './style.scss';
 const CronBuilder = require('cron-builder');
-
 
 // This component helps user to build cron expressions. We have built this component on top of
 // npm package: cron builder. We take the user inputs and then use the cron builder class and its
@@ -11,7 +10,7 @@ const CronBuilder = require('cron-builder');
 // props:
 // getCronExpression: PropTypes.func // Call back function to be called on toggle
 
-export class CronJob extends Component {
+class CronJob extends Component {
 
   constructor(props) {
     super(props);
@@ -423,6 +422,8 @@ export class CronJob extends Component {
     );
   }
 }
+
+export default CronJob;
 
 CronJob.propTypes = {
   getCronExpression: PropTypes.func,
