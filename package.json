@@ -1,0 +1,45 @@
+{
+  "name": "react-cron-jobs",
+  "version": "1.0.0",
+  "description": "React UI to build cron expressions",
+  "main": "webpack.config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "./node_modules/.bin/babel src --out-file index.js && node-sass src/ -o .",
+    "build:css": "node-sass src/ -o src/ ",
+    "watch:css": "npm run build:css && node-sass src/ -o src/ -w -r"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ranjansaga/react-cron-jobs.git"
+  },
+  "keywords": [
+    "react-cron-jobs",
+    "react-cron-builder",
+    "react-cron-expression",
+    "cron",
+    "cron-jobs",
+    "cron-builder"
+  ],
+  "author": "Ranjan Prabhu",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ranjansaga/react-cron-jobs/issues"
+  },
+  "homepage": "https://github.com/ranjansaga/react-cron-jobs#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.0",
+    "@babel/plugin-proposal-class-properties": "^7.8.3",
+    "@babel/preset-env": "^7.9.5",
+    "@babel/preset-react": "^7.9.4",
+    "@types/node-sass": "^4.11.0",
+    "node-sass": "^4.13.1",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
+  },
+  "peerDependencies": {
+    "react": "^16.6.1",
+    "react-dom": "^16.6.3"
+  }
+}

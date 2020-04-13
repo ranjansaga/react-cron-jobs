@@ -1,0 +1,36 @@
+$black: #000;
+$border_color: #bdbdbd;
+
+.cron-tab-container {
+  display: flex;
+
+  .time-picker-container {
+    display: flex;
+  }
+
+  .form-control-wrapper {
+    margin: 0rem 0.8rem;
+
+    .form-control {
+      display: block;
+      padding: 0.3rem 0.5rem;
+      font-size: 1.6rem;
+      height: 14rem;
+      width: 14rem;
+      line-height: 1.5;
+      color: $black;
+      border: 0.1rem solid $border_color;
+      transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+    }
+
+    .cron-select {
+      height: 3rem;
+      width: 14rem;
+    }
+  }
+
+  .supporting-words {
+    margin: 0 0.8rem;
+    font-size: 1.6rem;
+  }
+}

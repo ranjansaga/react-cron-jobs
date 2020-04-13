@@ -1,0 +1,22 @@
+.cron-tab-container {
+  display: flex; }
+  .cron-tab-container .time-picker-container {
+    display: flex; }
+  .cron-tab-container .form-control-wrapper {
+    margin: 0rem 0.8rem; }
+    .cron-tab-container .form-control-wrapper .form-control {
+      display: block;
+      padding: 0.3rem 0.5rem;
+      font-size: 1.6rem;
+      height: 14rem;
+      width: 14rem;
+      line-height: 1.5;
+      color: #000;
+      border: 0.1rem solid #bdbdbd;
+      transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out; }
+    .cron-tab-container .form-control-wrapper .cron-select {
+      height: 3rem;
+      width: 14rem; }
+  .cron-tab-container .supporting-words {
+    margin: 0 0.8rem;
+    font-size: 1.6rem; }
