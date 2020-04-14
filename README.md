@@ -6,7 +6,7 @@ React UI component to create cron expression.
 npm install --save react-cron-jobs
 ````
 ## demo
-[Live demo](https://codesandbox.io/s/react-cron-jobs-demo-lzxwn)
+<a href="https://codesandbox.io/s/react-cron-jobs-demo-lzxwn" target="_blank"> Live demo </a>
 
 ## Usage
 
