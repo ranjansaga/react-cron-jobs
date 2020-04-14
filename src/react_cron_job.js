@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import './style.scss';
+
 const CronBuilder = require('cron-builder');
 
 // This component helps user to build cron expressions. We have built this component on top of
