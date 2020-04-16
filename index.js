@@ -9,8 +9,6 @@ var _react = _interopRequireWildcard(require("react"));
 
 var _propTypes = _interopRequireDefault(require("prop-types"));
 
-var _lodash = _interopRequireDefault(require("lodash"));
-
 require("./style.css");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
@@ -446,8 +444,7 @@ var CronJob = /*#__PURE__*/function (_Component) {
     });
 
     _defineProperty(_assertThisInitialized(_this), "displayDateTimePicker", function (selectedFrequency, displayMinuteFlag, displayHourFlag, displayDayFlag, displayWeekFlag, displayMonthFlag) {
-      var operationCronDictCopy = _lodash["default"].cloneDeep(_this.state.operationCronDict);
-
+      var operationCronDictCopy = {};
       operationCronDictCopy.showMinutePicker = displayMinuteFlag;
       operationCronDictCopy.showHourPicker = displayHourFlag;
       operationCronDictCopy.showDayPicker = displayDayFlag;
@@ -535,7 +532,7 @@ var CronJob = /*#__PURE__*/function (_Component) {
       _this.updateSelectedValues(selectedValuesList, unitOfTime);
     });
 
-    _defineProperty(_assertThisInitialized(_this), "handleCronSelection", function (selectedFrequency) {
+    _defineProperty(_assertThisInitialized(_this), "updateCronSelection", function (selectedFrequency) {
       switch (selectedFrequency) {
         case 'minute':
           _this.displayDateTimePicker(selectedFrequency, false, false, false, false, false);
@@ -570,6 +567,21 @@ var CronJob = /*#__PURE__*/function (_Component) {
         default:
           return null;
       }
+    });
+
+    _defineProperty(_assertThisInitialized(_this), "handleCronSelection", function (selectedFrequency) {
+      // reset selected values when the scheduled
+      // frequency is updated.
+      _this.setState({
+        minuteSeletedList: [],
+        hourSelectedList: [],
+        daySelectedList: [],
+        weekSelectedList: [],
+        monthSelectedList: [],
+        operationCronDict: {}
+      }, function () {
+        _this.updateCronSelection(selectedFrequency);
+      });
     });
 
     _this.state = {
