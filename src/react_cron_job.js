@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
 import './style.scss';
 
 const CronBuilder = require('cron-builder');
@@ -277,7 +276,7 @@ class CronJob extends Component {
     displayDayFlag,
     displayWeekFlag,
     displayMonthFlag) => {
-    const operationCronDictCopy = _.cloneDeep(this.state.operationCronDict);
+    const operationCronDictCopy = {};
     operationCronDictCopy.showMinutePicker = displayMinuteFlag;
     operationCronDictCopy.showHourPicker = displayHourFlag;
     operationCronDictCopy.showDayPicker = displayDayFlag;
@@ -354,7 +353,7 @@ class CronJob extends Component {
 
   // This function decides which date / time picker should be displayed
   // based on schedule frequency selected.
-  handleCronSelection = (selectedFrequency) => {
+  updateCronSelection = (selectedFrequency) => {
     switch (selectedFrequency) {
 
       case 'minute':
@@ -384,6 +383,25 @@ class CronJob extends Component {
       default:
         return null;
     }
+  }
+
+  // This is called when scheduled frequency is updated.
+  // Here we reset selected values and re render the date
+  // time pickers as per schedule selected.
+  handleCronSelection = (selectedFrequency) => {
+
+    // reset selected values when the scheduled
+    // frequency is updated.
+    this.setState({
+      minuteSeletedList: [],
+      hourSelectedList: [],
+      daySelectedList: [],
+      weekSelectedList: [],
+      monthSelectedList: [],
+      operationCronDict: {}
+    }, () => {
+      this.updateCronSelection(selectedFrequency);
+    });
   }
 
   render() {

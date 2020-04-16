@@ -29,7 +29,6 @@
   "homepage": "https://github.com/ranjansaga/react-cron-jobs#readme",
   "dependencies": {
     "cron-builder": "^0.3.0",
-    "lodash":"^4.17.5",
     "prop-types":"^15.7.2"
   },
   "devDependencies": {
