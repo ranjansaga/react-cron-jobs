@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import './style.scss';
 const CronBuilder = require('cron-builder');
 
-export class CronJob extends Component {
+class CronJob extends Component {
 
   constructor(props) {
     super(props);
@@ -572,3 +572,5 @@ CronJob.propTypes = {
   frequency: PropTypes.string,
   cronString: PropTypes.string
 };
+
+export default CronJob;

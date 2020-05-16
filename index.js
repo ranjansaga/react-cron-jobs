@@ -3,7 +3,7 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.CronJob = void 0;
+exports["default"] = void 0;
 
 var _react = _interopRequireWildcard(require("react"));
 
@@ -863,7 +863,6 @@ var CronJob = /*#__PURE__*/function (_Component) {
   return CronJob;
 }(_react.Component);
 
-exports.CronJob = CronJob;
 CronJob.propTypes = {
   // Use this callback function to receive the cron expression
   // for the schedule configured.
@@ -876,3 +875,5 @@ CronJob.propTypes = {
   frequency: _propTypes["default"].string,
   cronString: _propTypes["default"].string
 };
+var _default = CronJob;
+exports["default"] = _default;
