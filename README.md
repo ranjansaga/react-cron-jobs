@@ -42,6 +42,9 @@ export default App;
 |-------------------|------------|-------------|
 | `getCronExpression`         | _function_  | Use this callback function to receive the cron expression for the schedule configured.  |
 | `jobName`  | _string_  | Pass this prop to get the name of the job in the callback function passed as props |
+| `frequency`  | _string_  | Pass this prop along with prop 'cronString' to load the cronjob UI with this frequency and highlight the selected values |
+| `cronString`  | _string_  | Pass this prop along with prop 'frequency' to load the cronjob UI with this cronString and highlight the selected values |
+
 ---
 
 ## License

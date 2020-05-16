@@ -1,16 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import './style.scss';
-
 const CronBuilder = require('cron-builder');
 
-// This component helps user to build cron expressions. We have built this component on top of
-// npm package: cron builder. We take the user inputs and then use the cron builder class and its
-// methods to generate the cron expression.
-// props:
-// getCronExpression: PropTypes.func // Call back function to be called on toggle
-
-class CronJob extends Component {
+export class CronJob extends Component {
 
   constructor(props) {
     super(props);
@@ -27,131 +20,240 @@ class CronJob extends Component {
       },
 
       // Maintain the user selected time values in state.
-      minuteSeletedList: [],
+      minuteSelectedList: [],
       hourSelectedList: [],
       daySelectedList: [],
       weekSelectedList: [],
       monthSelectedList: [],
     };
+
+    // Initializing refs for all the select
+    // components. This is needed to highlight
+    // selected values in date time picker select boxes
+    // for a given cron expression.
+    this.frequencyRef = undefined;
+    this.minuteRef = undefined;
+    this.hourRef = undefined;
+    this.dayRef = undefined;
+    this.weekRef = undefined;
+    this.monthRef = undefined;
+    this.yearRef = undefined;
   }
 
-  componentDidMount() {
+  componentWillReceiveProps(nextProps) {
+    if (this.props.frequency !== nextProps.frequency) {
 
-    // Set default schedule frequency as 'minute'.
-    this.handleCronSelection('minute');
-    this.prepareCronExpression();
+      // If cronstring is received as props,
+      // display the crontab with date and timepickers
+      // highlighted with selected values.
+      if (nextProps.cronString !== undefined &&
+        nextProps.cronString !== '') {
+
+        // cron string will be in the following format:
+        // < * * * * * >.
+        // Here the first star represents minute values
+        // second represents hour values.
+        // third represents day values.
+        // fourth represents month values.
+        // fifth represents week values.
+        // Example cron expressions:
+        // schedule job daily at 12 PM:  0 0 * * *
+        // schedule job every sunday at 9 AM and 6PM : 0 9,18 * * 0
+        const cronString = nextProps.cronString;
+
+        // Get the values from cron expression and populate them
+        // in state
+        const cronValues = cronString && cronString.split(' ');
+        this.setState({
+          selectedFrequency: nextProps.frequency,
+          minuteSelectedList: cronValues && cronValues[0].split(',') || [],
+          hourSelectedList: cronValues && cronValues[1].split(',') || [],
+          daySelectedList: cronValues && cronValues[2].split(',') || [],
+          monthSelectedList: cronValues && cronValues[3].split(',') || [],
+          weekSelectedList: cronValues && cronValues[4].split(',') || []
+        }, () => {
+
+          // Show the date time pickers as per the schedule frequency
+          // selected.
+          console.log('selected frq', this.state.selectedFrequency);
+          this.updateCronSelection(this.state.selectedFrequency);
+        });
+
+        // When no cron expression is provided to the component,
+        // Use schedule frequency as 'day' by default.
+      } else {
+        this.updateCronSelection('day');
+        this.prepareCronExpression();
+      }
+    }
   }
+
+  componentDidUpdate() {
+
+    // When cron expression is received as props
+    // we render the date time pickers according to the schedule
+    // frequency received and highlight the values in the select box
+    // as per the cron expression
+    if (this.state.selectedFrequency) {
+      const selectedOptionObj = this.frequencyOptionsList.find((row) => {
+        return row.value === this.state.selectedFrequency;
+      });
+      if (this.frequencyRef) {
+        this.frequencyRef[selectedOptionObj.index].selected = true;
+      }
+    }
+
+    // Hightlight the selected values in select box
+    this.highlightValueSelection(this.state.minuteSelectedList, this.minuteRef, this.minuteOptionsList);
+    this.highlightValueSelection(this.state.hourSelectedList, this.hourRef, this.hourOptionsList);
+    this.highlightValueSelection(this.state.daySelectedList, this.dayRef, this.dayOptionsList);
+    this.highlightValueSelection(this.state.monthSelectedList, this.monthRef, this.monthOptionsList);
+    this.highlightValueSelection(this.state.weekSelectedList, this.weekRef, this.weekOptionsList);
+  }
+
+  // This is an option list used by
+  // frequency select box
+  frequencyOptionsList = [
+
+    // We have to get this list as props and use whatever frequency values we need
+    // as per the requirements. Currently we only need the following
+
+    { label: 'Minute', value: 'minute', index: 0 },
+    { label: 'Hour', value: 'hour', index: 1 },
+    { label: 'Day', value: 'day', index: 2 },
+    { label: 'Week', value: 'week', index: 3 },
+    { label: 'Month', value: 'month', index: 4 },
+    { label: 'Year', value: 'year', index: 5 }
+  ]
 
   // This is an options list used by
   // minute picker select box.
   minuteOptionsList = [
-    { label: '0', value: 0 },
-    { label: '5', value: 5 },
-    { label: '10', value: 10 },
-    { label: '15', value: 15 },
-    { label: '20', value: 20 },
-    { label: '25', value: 25 },
-    { label: '30', value: 30 },
-    { label: '35', value: 35 },
-    { label: '40', value: 40 },
-    { label: '45', value: 45 },
-    { label: '50', value: 50 },
-    { label: '55', value: 55 }
+    { label: '0', value: 0, index: 0 },
+    { label: '5', value: 5, index: 1 },
+    { label: '10', value: 10, index: 2 },
+    { label: '15', value: 15, index: 3 },
+    { label: '20', value: 20, index: 4 },
+    { label: '25', value: 25, index: 5 },
+    { label: '30', value: 30, index: 6 },
+    { label: '35', value: 35, index: 7 },
+    { label: '40', value: 40, index: 8 },
+    { label: '45', value: 45, index: 9 },
+    { label: '50', value: 50, index: 10 },
+    { label: '55', value: 55, index: 11 }
   ];
 
   // This is an options list used by
   // hour picker select box.
   hourOptionsList = [
-    { label: '0', value: 0 },
-    { label: '1', value: 1 },
-    { label: '2', value: 2 },
-    { label: '3', value: 3 },
-    { label: '4', value: 4 },
-    { label: '5', value: 5 },
-    { label: '6', value: 6 },
-    { label: '7', value: 7 },
-    { label: '8', value: 8 },
-    { label: '9', value: 9 },
-    { label: '10', value: 10 },
-    { label: '11', value: 11 },
-    { label: '12', value: 12 },
-    { label: '13', value: 13 },
-    { label: '14', value: 14 },
-    { label: '15', value: 15 },
-    { label: '16', value: 16 },
-    { label: '17', value: 17 },
-    { label: '18', value: 18 },
-    { label: '19', value: 19 },
-    { label: '20', value: 20 },
-    { label: '21', value: 21 },
-    { label: '22', value: 22 },
-    { label: '23', value: 23 }
+    { label: '0', value: 0, index: 0 },
+    { label: '1', value: 1, index: 1 },
+    { label: '2', value: 2, index: 2 },
+    { label: '3', value: 3, index: 3 },
+    { label: '4', value: 4, index: 4 },
+    { label: '5', value: 5, index: 5 },
+    { label: '6', value: 6, index: 6 },
+    { label: '7', value: 7, index: 7 },
+    { label: '8', value: 8, index: 8 },
+    { label: '9', value: 9, index: 9 },
+    { label: '10', value: 10, index: 10 },
+    { label: '11', value: 11, index: 11 },
+    { label: '12', value: 12, index: 12 },
+    { label: '13', value: 13, index: 13 },
+    { label: '14', value: 14, index: 14 },
+    { label: '15', value: 15, index: 15 },
+    { label: '16', value: 16, index: 16 },
+    { label: '17', value: 17, index: 17 },
+    { label: '18', value: 18, index: 18 },
+    { label: '19', value: 19, index: 19 },
+    { label: '20', value: 20, index: 20 },
+    { label: '21', value: 21, index: 21 },
+    { label: '22', value: 22, index: 22 },
+    { label: '23', value: 23, index: 23 }
   ];
 
   // This is an options list used by
   // day picker select box.
   dayOptionsList = [
-    { label: '1st', value: 1 },
-    { label: '2nd', value: 2 },
-    { label: '3rd', value: 3 },
-    { label: '4th', value: 4 },
-    { label: '5th', value: 5 },
-    { label: '6th', value: 6 },
-    { label: '7th', value: 7 },
-    { label: '8th', value: 8 },
-    { label: '9th', value: 9 },
-    { label: '10th', value: 10 },
-    { label: '11th', value: 11 },
-    { label: '12th', value: 12 },
-    { label: '13th', value: 13 },
-    { label: '14th', value: 14 },
-    { label: '15th', value: 15 },
-    { label: '16th', value: 16 },
-    { label: '17th', value: 17 },
-    { label: '18th', value: 18 },
-    { label: '19th', value: 19 },
-    { label: '20th', value: 20 },
-    { label: '21st', value: 21 },
-    { label: '22nd', value: 22 },
-    { label: '23rd', value: 23 },
-    { label: '24th', value: 24 },
-    { label: '25th', value: 25 },
-    { label: '26th', value: 26 },
-    { label: '27th', value: 27 },
-    { label: '28th', value: 28 },
-    { label: '29th', value: 29 },
-    { label: '30th', value: 30 },
-    { label: '31th', value: 31 },
+    { label: '1st', value: 1, index: 0 },
+    { label: '2nd', value: 2, index: 1 },
+    { label: '3rd', value: 3, index: 2 },
+    { label: '4th', value: 4, index: 3 },
+    { label: '5th', value: 5, index: 4 },
+    { label: '6th', value: 6, index: 5 },
+    { label: '7th', value: 7, index: 6 },
+    { label: '8th', value: 8, index: 7 },
+    { label: '9th', value: 9, index: 8 },
+    { label: '10th', value: 10, index: 9 },
+    { label: '11th', value: 11, index: 10 },
+    { label: '12th', value: 12, index: 11 },
+    { label: '13th', value: 13, index: 12 },
+    { label: '14th', value: 14, index: 13 },
+    { label: '15th', value: 15, index: 14 },
+    { label: '16th', value: 16, index: 15 },
+    { label: '17th', value: 17, index: 16 },
+    { label: '18th', value: 18, index: 17 },
+    { label: '19th', value: 19, index: 18 },
+    { label: '20th', value: 20, index: 20 },
+    { label: '21st', value: 21, index: 21 },
+    { label: '22nd', value: 22, index: 22 },
+    { label: '23rd', value: 23, index: 23 },
+    { label: '24th', value: 24, index: 24 },
+    { label: '25th', value: 25, index: 25 },
+    { label: '26th', value: 26, index: 26 },
+    { label: '27th', value: 27, index: 27 },
+    { label: '28th', value: 28, index: 28 },
+    { label: '29th', value: 29, index: 29 },
+    { label: '30th', value: 30, index: 30 },
+    { label: '31th', value: 31, index: 31 },
   ]
 
   // This is an options list used by
   // week picker select box.
   weekOptionsList = [
-    { label: 'Sunday', value: 1 },
-    { label: 'Monday', value: 2 },
-    { label: 'Tuesday', value: 3 },
-    { label: 'Wednesday', value: 4 },
-    { label: 'Thursday', value: 5 },
-    { label: 'Friday', value: 6 },
-    { label: 'Saturday', value: 7 }
+    { label: 'Sunday', value: 1, index: 0 },
+    { label: 'Monday', value: 2, index: 1 },
+    { label: 'Tuesday', value: 3, index: 2 },
+    { label: 'Wednesday', value: 4, index: 3 },
+    { label: 'Thursday', value: 5, index: 4 },
+    { label: 'Friday', value: 6, index: 5 },
+    { label: 'Saturday', value: 7, index: 6 }
   ]
 
   // This is an options list used by
   // month picker select box.
   monthOptionsList = [
-    { label: 'January', value: 1 },
-    { label: 'Febrauary', value: 2 },
-    { label: 'March', value: 3 },
-    { label: 'April', value: 4 },
-    { label: 'May', value: 5 },
-    { label: 'June', value: 6 },
-    { label: 'July', value: 7 },
-    { label: 'August', value: 8 },
-    { label: 'September', value: 9 },
-    { label: 'October', value: 10 },
-    { label: 'November', value: 11 },
-    { label: 'December', value: 12 },
+    { label: 'January', value: 1, index: 0 },
+    { label: 'Febrauary', value: 2, index: 1 },
+    { label: 'March', value: 3, index: 2 },
+    { label: 'April', value: 4, index: 3 },
+    { label: 'May', value: 5, index: 4 },
+    { label: 'June', value: 6, index: 5 },
+    { label: 'July', value: 7, index: 6 },
+    { label: 'August', value: 8, index: 7 },
+    { label: 'September', value: 9, index: 8 },
+    { label: 'October', value: 10, index: 9 },
+    { label: 'November', value: 11, index: 10 },
+    { label: 'December', value: 12, index: 11 },
   ];
+
+  // This function highlights the options in a select box
+  // based on the values in the selectedList. The following
+  // are the arguments received by this function:
+  // selectedList: List of values that are to be highlighted in select box.
+  // refObject   : Reference to the select box whose options are to be highlighted.
+  // optionsList : All the options of select box.
+  highlightValueSelection = (selectedList, refObject, optionsList) => {
+
+    selectedList && selectedList.map((value) => {
+      const optionObj = optionsList.find((obj) => {
+        return obj.value.toString() === value;
+      });
+      if (refObject && optionObj !== undefined) {
+        refObject[optionObj.index].selected = true;
+      }
+    });
+  }
 
   // This function returns an option tag using the 'label' and 'value'
   // keys present in the object('item') passed as argument
@@ -167,6 +269,7 @@ class CronJob extends Component {
           className="form-control"
           id="minute"
           name="minute"
+          ref={select => { this.minuteRef = select; }}
           onChange={(e) => { this.updateScheduleConfiguration(e.target.options, 'minute'); }}
           multiple
         >
@@ -188,6 +291,7 @@ class CronJob extends Component {
             className="form-control"
             id="hour"
             name="hour"
+            ref={select => { this.hourRef = select; }}
             onChange={(e) => { this.updateScheduleConfiguration(e.target.options, 'hour'); }}
             multiple
           >
@@ -210,6 +314,7 @@ class CronJob extends Component {
             className="form-control"
             id="day"
             name="day"
+            ref={select => { this.dayRef = select; }}
             onChange={(e) => { this.updateScheduleConfiguration(e.target.options, 'day'); }}
             multiple
           >
@@ -232,6 +337,7 @@ class CronJob extends Component {
             className="form-control"
             id="week"
             name="week"
+            ref={select => { this.weekRef = select; }}
             onChange={(e) => { this.updateScheduleConfiguration(e.target.options, 'week'); }}
             multiple
           >
@@ -254,6 +360,7 @@ class CronJob extends Component {
             className="form-control"
             id="month"
             name="month"
+            ref={select => { this.monthRef = select; }}
             onChange={(e) => { this.updateScheduleConfiguration(e.target.options, 'month'); }}
             multiple
           >
@@ -293,12 +400,15 @@ class CronJob extends Component {
   // class and its methods (cron builder npm pacakge).
   prepareCronExpression = () => {
     const cronExp = new CronBuilder();
-    this.state.minuteSeletedList.length && cronExp.set('minute', this.state.minuteSeletedList);
+    this.state.minuteSelectedList.length && cronExp.set('minute', this.state.minuteSelectedList);
     this.state.hourSelectedList.length && cronExp.set('hour', this.state.hourSelectedList);
     this.state.daySelectedList.length && cronExp.set('dayOfTheMonth', this.state.daySelectedList);
     this.state.weekSelectedList.length && cronExp.set('dayOfTheWeek', this.state.weekSelectedList);
     this.state.monthSelectedList.length && cronExp.set('month', this.state.monthSelectedList);
-    this.props.getCronExpression(cronExp.build(), this.props.jobName);
+    const cronInfoObj = {};
+    cronInfoObj.cronString = cronExp.build();
+    cronInfoObj.scheduleFrequency = this.state.selectedFrequency;
+    this.props.getCronInfo(cronInfoObj, this.props.jobName);
   }
 
   // This function updates the selected values list in the state
@@ -307,7 +417,7 @@ class CronJob extends Component {
     switch (unitOfTime) {
 
       case 'minute':
-        this.setState({ minuteSeletedList: selectedValuesList },
+        this.setState({ minuteSelectedList: selectedValuesList },
           () => { this.prepareCronExpression(); });
         break;
 
@@ -337,10 +447,10 @@ class CronJob extends Component {
   }
 
   // This function is called when any changes are done on
-  // any of the select boxes ofdate time picker UI. This function
+  // any of the select boxes of date time picker UI. This function
   // takes two arguments:
-  // options: List containing DOM objects of all options
-  // unitOfTime: The date / time picker select box which is updated in UI
+  // options    : List containing DOM objects of all options
+  // unitOfTime : The date / time picker select box which is updated in UI
   updateScheduleConfiguration = (options, unitOfTime) => {
     let selectedValuesList = [];
 
@@ -390,15 +500,23 @@ class CronJob extends Component {
   // time pickers as per schedule selected.
   handleCronSelection = (selectedFrequency) => {
 
+    this.minuteRef = undefined;
+    this.hourRef = undefined;
+    this.dayRef = undefined;
+    this.weekRef = undefined;
+    this.monthRef = undefined;
+    this.yearRef = undefined;
+
     // reset selected values when the scheduled
     // frequency is updated.
     this.setState({
-      minuteSeletedList: [],
+      minuteSelectedList: [],
       hourSelectedList: [],
       daySelectedList: [],
       weekSelectedList: [],
       monthSelectedList: [],
-      operationCronDict: {}
+      operationCronDict: {},
+      selectedFrequency: selectedFrequency
     }, () => {
       this.updateCronSelection(selectedFrequency);
     });
@@ -412,14 +530,12 @@ class CronJob extends Component {
           <select
             className="form-control cron-select"
             name="cronSelect"
+            ref={select => { this.frequencyRef = select; }}
             onChange={(e) => { this.handleCronSelection(e.target.value); }}
           >
-            <option value="minute">Minute</option>
-            <option value="hour">Hour</option>
-            <option value="day">Day</option>
-            <option value="week">Week</option>
-            <option value="month">Month</option>
-            <option value="year">Year</option>
+            {this.frequencyOptionsList.map((item) => {
+              return this.getOption(item, 'frequency');
+            })}
           </select>
         </div>
 
@@ -442,9 +558,17 @@ class CronJob extends Component {
   }
 }
 
-export default CronJob;
-
 CronJob.propTypes = {
-  getCronExpression: PropTypes.func,
-  jobName: PropTypes.string
+  // Use this callback function to receive the cron expression
+  // for the schedule configured.
+  getCronString: PropTypes.func,
+
+  // Pass this prop to get the name of the job in the above callback
+  // function passed as props
+  jobName: PropTypes.string,
+
+  // Use this to configure defaults or load CronJob UI for
+  //particular configuration
+  frequency: PropTypes.string,
+  cronString: PropTypes.string
 };
